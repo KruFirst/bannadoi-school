@@ -8,6 +8,7 @@ import GlobalSearchModal from "@/components/GlobalSearchModal";
 import { schoolInfo } from "@/data/schoolData";
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://bannadoi-school.vercel.app'),
   title: `${schoolInfo.nameTh} (${schoolInfo.nameEn}) | สพป.แม่ฮ่องสอน เขต 2`,
   description: `${schoolInfo.nameTh} ${schoolInfo.affiliation} ${schoolInfo.philosophy}`,
   keywords: [
