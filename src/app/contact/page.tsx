@@ -26,22 +26,38 @@ export default function ContactPage() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setSubmitError('');
+
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      if (res.ok) {
+
+      const result = await res.json();
+
+      if (res.ok && result.success) {
+        // Save client-side backup
+        if (typeof window !== 'undefined') {
+          try {
+            const existing = JSON.parse(localStorage.getItem('bannadoi_sent_contacts') || '[]');
+            existing.unshift(result.data || { ...formData, id: `local-${Date.now()}`, createdAt: new Date().toISOString() });
+            localStorage.setItem('bannadoi_sent_contacts', JSON.stringify(existing));
+          } catch {}
+        }
         setSubmitted(true);
+      } else {
+        setSubmitError(result.error || 'ไม่สามารถส่งข้อความได้ กรุณาลองใหม่อีกครั้ง');
       }
     } catch (err) {
       console.error(err);
-      setSubmitted(true);
+      setSubmitError('การเชื่อมต่อขัดข้อง กรุณาลองใหม่อีกครั้ง');
     } finally {
       setLoading(false);
     }

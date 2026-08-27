@@ -12,11 +12,11 @@ import {
 import { schoolInfo } from '@/data/schoolData';
 
 const questions = [
-  { key: 'academicScore', label: '1. ด้านคุณภาพการจัดการเรียนการสอนและพัฒนาการของผู้เรียน' },
-  { key: 'facilityScore', label: '2. ด้านอาคารสถานที่ สภาพแวดล้อม และความปลอดภัยในโรงเรียน' },
-  { key: 'boardingScore', label: '3. ด้านการดูแลเอาใจใส่ชีวิตความเป็นอยู่ของนักเรียนพักนอน' },
-  { key: 'transparencyScore', label: '4. ด้านความโปร่งใส การเปิดเผยข้อมูลข่าวสาร และการสื่อสาร' },
-  { key: 'overallScore', label: '5. ความพึงพอใจในภาพรวมต่อการบริหารงานของโรงเรียนบ้านนาดอย' },
+  { key: 'academicScore', label: '1. ด้านความสวยงาม ความทันสมัย และความสะดวกในการค้นหาข้อมูลบนเว็บไซต์' },
+  { key: 'facilityScore', label: '2. ด้านความถูกต้อง ครบถ้วน และความเป็นปัจจุบันของข้อมูลข่าวสาร' },
+  { key: 'boardingScore', label: '3. ด้านความรวดเร็วในการเปิดหน้าเว็บและการแสดงผลบนโทรศัพท์มือถือ' },
+  { key: 'transparencyScore', label: '4. ด้านระบบบริการออนไลน์ (สมัครเรียน, ตรวจสอบเกียรติบัตร, หอนอน, อาหาร)' },
+  { key: 'overallScore', label: '5. ความพึงพอใจในภาพรวมต่อการใช้งานเว็บไซต์โรงเรียนบ้านนาดอย' },
 ];
 
 export default function SurveyPage() {
@@ -45,6 +45,15 @@ export default function SurveyPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+
+      if (typeof window !== 'undefined') {
+        try {
+          const existing = JSON.parse(localStorage.getItem('bannadoi_sent_surveys') || '[]');
+          existing.unshift({ ...formData, id: `local-sv-${Date.now()}`, createdAt: new Date().toISOString() });
+          localStorage.setItem('bannadoi_sent_surveys', JSON.stringify(existing));
+        } catch {}
+      }
+
       if (res.ok) {
         setSubmitted(true);
       }
@@ -63,9 +72,9 @@ export default function SurveyPage() {
           <div className="w-16 h-16 rounded-full bg-emerald-50 text-school-green-700 flex items-center justify-center mx-auto">
             <CheckCircle className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">ขอบพระคุณสำหรับความคิดเห็น</h1>
+          <h1 className="text-2xl font-bold text-slate-800">ขอบพระคุณสำหรับข้อเสนอแนะ</h1>
           <p className="text-xs md:text-sm text-slate-500 leading-relaxed">
-            โรงเรียนบ้านนาดอยได้รับข้อมูลการประเมินความพึงพอใจของท่านเรียบร้อยแล้ว ทุกข้อเสนอแนะจะถูกนำไปใช้เพื่อพัฒนาคุณภาพการศึกษาและดูแลบุตรหลานอย่างต่อเนื่อง
+            โรงเรียนบ้านนาดอยได้รับข้อมูลการประเมินความพึงพอใจการใช้งานเว็บไซต์ของท่านเรียบร้อยแล้ว ทุกข้อเสนอแนะจะถูกนำไปใช้พัฒนา ปรับปรุง และยกระดับการให้บริการทางดิจิทัลให้ดียิ่งขึ้น
           </p>
           <a
             href="/"
@@ -85,13 +94,13 @@ export default function SurveyPage() {
         <div className="space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-school-green-50 text-school-green-700 text-xs font-semibold">
             <Award className="w-3.5 h-3.5" />
-            <span>แบบสำรวจความคิดเห็นและความพึงพอใจ</span>
+            <span>แบบประเมินความพึงพอใจการใช้งานเว็บไซต์</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">
-            แบบประเมินความพึงพอใจการบริหารสถานศึกษา {schoolInfo.nameTh}
+            แบบประเมินความพึงพอใจการใช้งานเว็บไซต์สถานศึกษา {schoolInfo.nameTh}
           </h1>
           <p className="text-xs md:text-sm text-slate-500 leading-relaxed">
-            ประจำปีการศึกษา 2569 เพื่อนำผลการประเมินไปพัฒนาและปรับปรุงคุณภาพการจัดการศึกษาให้ดียิ่งขึ้น
+            จัดทำขึ้นเพื่อรับฟังความคิดเห็นจากผู้ปกครอง นักเรียน และประชาชน สำหรับนำไปใช้เป็นข้อมูลพัฒนาและรายงานการประเมิน ITA / SAR ประจำปี 2569
           </p>
         </div>
 

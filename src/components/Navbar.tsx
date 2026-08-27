@@ -41,7 +41,7 @@ const serviceLinks = [
   { name: 'ตรวจสอบเกียรติบัตร', href: '/certificates', icon: Award, desc: 'ตรวจสอบรหัสวุฒิบัตรออนไลน์' },
   { name: 'ทำเนียบรางวัลดีเด่น', href: '/awards', icon: Trophy, desc: 'รางวัลระดับเขตและจังหวัด' },
   { name: 'เอกสารดาวน์โหลด', href: '/downloads', icon: FileText, desc: 'แบบคำร้องและแบบฟอร์ม' },
-  { name: 'แบบประเมินความพึงพอใจ', href: '/survey', icon: ClipboardList, desc: 'แบบสำรวจความคิดเห็น' },
+  { name: 'ประเมินความพึงพอใจการใช้งานเว็บ', href: '/survey', icon: ClipboardList, desc: 'แบบสำรวจความพึงพอใจเว็บไซต์' },
 ];
 
 export default function Navbar() {

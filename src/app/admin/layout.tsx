@@ -34,8 +34,8 @@ const adminNav = [
   { name: 'จัดการปฏิทินกิจกรรม', href: '/admin/calendar', icon: Calendar },
   { name: 'จัดการทำเนียบบุคลากร', href: '/admin/staff', icon: Users },
   { name: 'จัดการเอกสารดาวน์โหลด', href: '/admin/documents', icon: ShieldCheck },
-  { name: 'กล่องข้อความ & E-Petition', href: '/admin/petitions', icon: MessageSquare },
-  { name: 'ผลการประเมินความพึงพอใจ', href: '/admin/surveys', icon: Award },
+  { name: 'กล่องรับ Feedback & ร้องเรียน', href: '/admin/petitions', icon: MessageSquare },
+  { name: 'ผลสำรวจความพึงพอใจ', href: '/admin/surveys', icon: Award },
   { name: 'สำรอง & กู้คืนข้อมูล', href: '/admin/backup', icon: Database },
   { name: 'ตั้งค่าบัญชี & รหัสผ่าน', href: '/admin/profile', icon: KeyRound },
 ];
@@ -44,14 +44,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  // If on login page, don't show admin chrome
+  // Check login status on mount
+  useEffect(() => {
+    if (pathname === '/admin/login') {
+      setIsAuthenticated(true);
+      return;
+    }
+
+    const isLogged = localStorage.getItem('bannadoi_admin_logged_in');
+    if (isLogged === 'true') {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+      router.replace('/admin/login');
+    }
+  }, [pathname, router]);
+
+  // If on login page, render children directly
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
 
+  // Show loading while verifying auth
+  if (isAuthenticated === null || !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 text-center space-y-3">
+        <div className="w-12 h-12 border-4 border-school-green-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-white text-sm font-semibold">กำลังตรวจสอบสิทธิ์ผู้ดูแลระบบ...</p>
+        <p className="text-slate-400 text-xs">หากยังไม่ได้เข้าสู่ระบบ ระบบจะนำท่านไปยังหน้าล็อกอิน</p>
+      </div>
+    );
+  }
+
   const handleLogout = () => {
-    router.push('/');
+    localStorage.removeItem('bannadoi_admin_logged_in');
+    document.cookie = 'bannadoi_admin_auth=; path=/; max-age=0';
+    router.push('/admin/login');
   };
 
   return (

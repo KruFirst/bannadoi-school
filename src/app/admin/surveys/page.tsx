@@ -24,9 +24,24 @@ export default function AdminSurveysPage() {
     try {
       const res = await fetch('/api/survey');
       const data = await res.json();
-      if (data.success) {
-        setSurveys(data.data);
+      let serverSurveys: SurveyItem[] = [];
+      if (data.success && Array.isArray(data.data)) {
+        serverSurveys = data.data;
       }
+
+      // Merge with any client-side backup from localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          const localSent = JSON.parse(localStorage.getItem('bannadoi_sent_surveys') || '[]');
+          if (Array.isArray(localSent)) {
+            const existingIds = new Set(serverSurveys.map((s) => s.id));
+            const newLocal = localSent.filter((item) => !existingIds.has(item.id));
+            serverSurveys = [...newLocal, ...serverSurveys];
+          }
+        } catch {}
+      }
+
+      setSurveys(serverSurveys);
     } catch (err) {
       console.error(err);
     } finally {
@@ -57,20 +72,30 @@ export default function AdminSurveysPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-          <Award className="w-6 h-6 text-amber-500" />
-          <span>ผลการประเมินความพึงพอใจสถานศึกษา</span>
-        </h1>
-        <p className="text-xs text-slate-500">
-          รายงานผลคะแนนความพึงพอใจและข้อคิดเห็นจากผู้ปกครอง นักเรียน และชุมชน ({total} ชุด)
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+            <Award className="w-6 h-6 text-amber-500" />
+            <span>ผลการประเมินความพึงพอใจการใช้งานเว็บไซต์</span>
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            รายงานผลคะแนนความพึงพอใจและข้อเสนอแนะเพื่อการรายงาน SAR & การประเมิน ITA ({total} ชุด)
+          </p>
+        </div>
+
+        <button
+          onClick={fetchSurveys}
+          disabled={loading}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold shadow-2xs transition-all disabled:opacity-50"
+        >
+          <span>รีเฟรชข้อมูล</span>
+        </button>
       </div>
 
       {/* Summary Score Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1">
-          <span className="text-[11px] font-semibold text-slate-400">ภาพรวมทั้งหมด</span>
+          <span className="text-[11px] font-semibold text-slate-400">ภาพรวมเว็บไซต์</span>
           <div className="flex items-baseline gap-1 text-2xl font-bold text-amber-600">
             <span>{avgOverall}</span>
             <span className="text-xs text-slate-400">/ 5.00</span>
@@ -78,7 +103,7 @@ export default function AdminSurveysPage() {
         </div>
 
         <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1">
-          <span className="text-[11px] font-semibold text-slate-400">ด้านวิชาการ</span>
+          <span className="text-[11px] font-semibold text-slate-400">ค้นหาง่าย & สวยงาม</span>
           <div className="flex items-baseline gap-1 text-2xl font-bold text-emerald-600">
             <span>{avgAcademic}</span>
             <span className="text-xs text-slate-400">/ 5.00</span>
@@ -86,7 +111,7 @@ export default function AdminSurveysPage() {
         </div>
 
         <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1">
-          <span className="text-[11px] font-semibold text-slate-400">ด้านนักเรียนพักนอน</span>
+          <span className="text-[11px] font-semibold text-slate-400">ความเร็วบนมือถือ</span>
           <div className="flex items-baseline gap-1 text-2xl font-bold text-purple-600">
             <span>{avgBoarding}</span>
             <span className="text-xs text-slate-400">/ 5.00</span>
@@ -94,7 +119,7 @@ export default function AdminSurveysPage() {
         </div>
 
         <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1">
-          <span className="text-[11px] font-semibold text-slate-400">ด้านอาคารสถานที่</span>
+          <span className="text-[11px] font-semibold text-slate-400">ความครบถ้วนข้อมูล</span>
           <div className="flex items-baseline gap-1 text-2xl font-bold text-blue-600">
             <span>{avgFacility}</span>
             <span className="text-xs text-slate-400">/ 5.00</span>
@@ -102,7 +127,7 @@ export default function AdminSurveysPage() {
         </div>
 
         <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1">
-          <span className="text-[11px] font-semibold text-slate-400">ด้านความโปร่งใส ITA</span>
+          <span className="text-[11px] font-semibold text-slate-400">บริการออนไลน์</span>
           <div className="flex items-baseline gap-1 text-2xl font-bold text-slate-700">
             <span>{avgTransparency}</span>
             <span className="text-xs text-slate-400">/ 5.00</span>
