@@ -51,8 +51,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('bannadoi_admin_logged_in');
-    router.push('/admin/login');
+    router.push('/');
   };
 
   return (

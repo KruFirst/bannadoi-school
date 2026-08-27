@@ -208,14 +208,14 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Desktop Admin Login Button */}
+          {/* Desktop Admin Direct Access Button */}
           <div className="hidden lg:flex items-center gap-2 shrink-0">
             <Link
               href="/admin"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl border border-transparent hover:border-slate-200 transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-school-purple-700 bg-purple-50 hover:bg-school-purple-700 hover:text-white rounded-xl border border-purple-200 transition-all shadow-2xs"
             >
               <Lock className="w-3 h-3" />
-              <span>ผู้ดูแลระบบ</span>
+              <span>จัดการระบบ (Admin)</span>
             </Link>
           </div>
 
@@ -302,10 +302,10 @@ export default function Navbar() {
             <Link
               href="/admin"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center gap-1.5 w-full py-2.5 px-4 text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl font-bold transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs text-school-purple-800 bg-purple-50 hover:bg-school-purple-700 hover:text-white rounded-xl font-bold transition-all border border-purple-200"
             >
               <Lock className="w-3.5 h-3.5" />
-              <span>เข้าสู่ระบบหลังบ้าน (Admin CMS)</span>
+              <span>เข้าสู่ระบบแก้ไขหน้าเว็บ (Admin CMS)</span>
             </Link>
           </div>
         </div>
